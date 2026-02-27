@@ -1,7 +1,60 @@
 ﻿@page "/"
+@inject SteamAuthService SteamAuth
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<div class="login-container">
+    <div class="login-card">
+        <div class="steam-logo">
+            <h1>🎮</h1>
+        </div>
+        
+        <h1>Librairie Steam</h1>
+        <p>Gérez votre bibliothèque Steam facilement</p>
+        
+        <button class="steam-login-btn" @onclick="LoginWithSteam">
+            Se connecter avec Steam
+        </button>
+        
+        <p class="info-text">
+            Vous serez redirigé vers Steam pour vous connecter
+        </p>
+    </div>
+</div>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var currentUrl = Navigation.Uri;
+        
+        if (currentUrl.Contains("openid.mode=id_res"))
+        {
+            Console.WriteLine("🔄 Retour de Steam détecté");
+            
+            var steamId = await SteamAuth.ValidateSteamLogin(currentUrl);
+            
+            if (!string.IsNullOrEmpty(steamId))
+            {
+                await SteamAuth.SaveUserSession(steamId);
+                Navigation.NavigateTo("/library", forceLoad: true);
+            }
+            else
+            {
+                Console.WriteLine("❌ Échec de l'authentification");
+            }
+        }
+        else
+        {
+            var isLoggedIn = await SteamAuth.IsLoggedIn();
+            if (isLoggedIn)
+            {
+                Navigation.NavigateTo("/library");
+            }
+        }
+    }
+    
+    private void LoginWithSteam()
+    {
+        var steamLoginUrl = SteamAuth.GetSteamLoginUrl();
+        Navigation.NavigateTo(steamLoginUrl, forceLoad: true);
+    }
+}

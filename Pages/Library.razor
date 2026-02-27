@@ -1,0 +1,33 @@
+﻿@page "/library"
+@inject SteamAuthService SteamAuth
+@inject NavigationManager Navigation
+
+<div class="library-container">
+    <h1>Ma Bibliothèque Steam</h1>
+    
+    <p>Bienvenue ! Votre SteamID : @steamId</p>
+    
+    <button @onclick="Logout">Déconnexion</button>
+</div>
+
+@code {
+    private string? steamId;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        steamId = await SteamAuth.GetCurrentSteamId();
+        
+        if (string.IsNullOrEmpty(steamId))
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+        
+        Console.WriteLine($"✅ Connecté avec SteamID : {steamId}");
+    }
+    
+    private async Task Logout()
+    {
+        await SteamAuth.Logout();
+    }
+}
