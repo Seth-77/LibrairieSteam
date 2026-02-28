@@ -1,6 +1,7 @@
 ﻿@page "/library"
 @inject SteamAuthService SteamAuth
 @inject SteamApiService SteamApi
+@inject FavoritesService Favorites
 @inject NavigationManager Navigation
 
 <div class="library-container">
@@ -19,8 +20,15 @@
             {
                 <div class="game-card">
                     <img src="@game.HeaderImageUrl" alt="@game.Name" />
-                    <h3>@game.Name</h3>
-                    <p>⏱️ @game.PlaytimeFormatted</p>
+                    
+                    <div class="game-info">
+                        <h3>@game.Name</h3>
+                        <p>⏱️ @game.PlaytimeFormatted</p>
+                        
+                        <button class="favorite-btn" @onclick="() => ToggleFavorite(game)">
+                            @(game.IsFavorite ? "⭐" : "☆")
+                        </button>
+                    </div>
                 </div>
             }
         </div>
@@ -45,7 +53,21 @@
         }
         
         games = await SteamApi.GetOwnedGamesAsync(steamId);
+        
+        var favoriteIds = await Favorites.GetFavoritesAsync(steamId);
+        
+        foreach (var game in games)
+        {
+            game.IsFavorite = favoriteIds.Contains(game.AppId);
+        }
+        
         isLoading = false;
+    }
+    
+    private async Task ToggleFavorite(SteamGame game)
+    {
+        await Favorites.ToggleFavoriteAsync(steamId!, game.AppId);
+        game.IsFavorite = !game.IsFavorite;
     }
     
     private async Task Logout()

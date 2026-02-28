@@ -11,5 +11,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<SteamAuthService>();
 builder.Services.AddScoped<SteamApiService>();
+builder.Services.AddScoped<FavoritesService>();
 
 await builder.Build().RunAsync();
