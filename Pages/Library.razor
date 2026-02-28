@@ -1,17 +1,38 @@
 ﻿@page "/library"
 @inject SteamAuthService SteamAuth
+@inject SteamApiService SteamApi
 @inject NavigationManager Navigation
 
 <div class="library-container">
     <h1>Ma Bibliothèque Steam</h1>
     
-    <p>Bienvenue ! Votre SteamID : @steamId</p>
-    
-    <button @onclick="Logout">Déconnexion</button>
+    @if (isLoading)
+    {
+        <p>Chargement de vos jeux...</p>
+    }
+    else
+    {
+        <p>@games.Count jeu(x) chargé(s)</p>
+        
+        <div class="games-grid">
+            @foreach (var game in games)
+            {
+                <div class="game-card">
+                    <img src="@game.HeaderImageUrl" alt="@game.Name" />
+                    <h3>@game.Name</h3>
+                    <p>⏱️ @game.PlaytimeFormatted</p>
+                </div>
+            }
+        </div>
+        
+        <button @onclick="Logout">Déconnexion</button>
+    }
 </div>
 
 @code {
     private string? steamId;
+    private List<SteamGame> games = new();
+    private bool isLoading = true;
     
     protected override async Task OnInitializedAsync()
     {
@@ -23,7 +44,8 @@
             return;
         }
         
-        Console.WriteLine($"✅ Connecté avec SteamID : {steamId}");
+        games = await SteamApi.GetOwnedGamesAsync(steamId);
+        isLoading = false;
     }
     
     private async Task Logout()
