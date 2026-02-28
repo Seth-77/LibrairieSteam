@@ -1,0 +1,5 @@
+- Ajouter Barre de cherche jeux
+- Filtrer par favoris
+- Ameliorer ergonomie visuelle 
+- Mettre la nav bar en Haut + bouton déconnexion
+- Voir pour mettre d'autre stats de jeux

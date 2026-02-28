@@ -13,55 +13,99 @@
     border-radius: 16px;
     padding: 60px 40px;
     text-align: center;
-    max-width: 450px;
+    max-width: 500px;
     width: 100%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .steam-logo {
-    font-size: 4rem;
-    margin-bottom: 20px;
+    font-size: 5rem;
+    margin-bottom: 24px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .login-card h1 {
     color: #ffffff;
-    font-size: 2.5rem;
-    margin-bottom: 12px;
+    font-size: 2.8rem;
+    margin-bottom: 16px;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .login-card p {
     color: #b8b6b4;
-    margin-bottom: 30px;
-    font-size: 1.1rem;
+    margin-bottom: 32px;
+    font-size: 1.2rem;
+    line-height: 1.6;
 }
 
 .steam-login-btn {
-    background: #66c0f4;
+    background: linear-gradient(135deg, #66c0f4 0%, #5ab0e0 100%);
     color: #1b2838;
     border: none;
-    padding: 18px 40px;
+    padding: 18px 48px;
     border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
-    max-width: 320px;
+    max-width: 380px;
+    box-shadow: 0 4px 16px rgba(102, 192, 244, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .steam-login-btn:hover {
-    background: #5ab0e0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 192, 244, 0.4);
+    background: linear-gradient(135deg, #5ab0e0 0%, #4a9dd0 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(102, 192, 244, 0.6);
 }
 
 .steam-login-btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(102, 192, 244, 0.4);
 }
 
 .info-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #8f98a0;
-    margin-top: 24px;
+    margin-top: 28px;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .login-card {
+        padding: 40px 24px;
+    }
+    
+    .login-card h1 {
+        font-size: 2.2rem;
+    }
+    
+    .steam-logo {
+        font-size: 4rem;
+    }
 }

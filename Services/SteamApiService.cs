@@ -48,5 +48,56 @@ namespace LibrairieSteam.Services
             
             return games.OrderByDescending(g => g.PlaytimeForever).ToList();
         }
+        
+        public async Task<List<GameNewsItem>> GetGameNewsAsync(int appId)
+        {
+            var steamUrl = $"{SteamApiBaseUrl}/ISteamNews/GetNewsForApp/v0002/" +
+                          $"?appid={appId}&count=10";
+            
+            var url = $"{CorsProxy}{Uri.EscapeDataString(steamUrl)}";
+            
+            var response = await _httpClient.GetAsync(url);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(jsonResponse);
+            
+            var newsList = new List<GameNewsItem>();
+            
+            var newsItems = jsonDoc.RootElement
+                .GetProperty("appnews")
+                .GetProperty("newsitems");
+            
+            var oneMonthAgo = DateTimeOffset.UtcNow.AddMonths(-1).ToUnixTimeSeconds();
+            
+            foreach (var item in newsItems.EnumerateArray())
+            {
+                var date = item.GetProperty("date").GetInt64();
+                
+                if (date < oneMonthAgo)
+                    continue;
+                
+                var content = item.GetProperty("contents").GetString() ?? "";
+                var preview = content.Length > 200 ? content.Substring(0, 200) + "..." : content;
+                
+                newsList.Add(new GameNewsItem
+                {
+                    Title = item.GetProperty("title").GetString() ?? "",
+                    Date = DateTimeOffset.FromUnixTimeSeconds(date).DateTime,
+                    ContentPreview = preview,
+                    Url = item.GetProperty("url").GetString() ?? ""
+                });
+            }
+            
+            return newsList;
+        }
+    }
+    
+    public class GameNewsItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        public string ContentPreview { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
+        
+        public string DateFormatted => Date.ToString("dd MMMM yyyy");
     }
 }

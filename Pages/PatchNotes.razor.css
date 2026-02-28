@@ -1,0 +1,151 @@
+.patchnotes-container {
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
+    min-height: 100vh;
+}
+
+.patchnotes-container h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.patchnotes-container > p {
+    color: #b8b6b4;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(27, 40, 56, 0.9);
+    border: 1px solid rgba(102, 192, 244, 0.3);
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+.empty-state p {
+    color: #b8b6b4;
+    font-size: 1.1rem;
+    margin: 12px 0;
+}
+
+.game-section {
+    margin-bottom: 40px;
+    background: rgba(27, 40, 56, 0.9);
+    border: 1px solid rgba(102, 192, 244, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.game-header {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.game-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    padding: 40px 24px 20px;
+}
+
+.game-info-overlay h2 {
+    color: #ffffff;
+    font-size: 1.8rem;
+    margin: 0 0 8px 0;
+}
+
+.game-info-overlay p {
+    color: #66c0f4;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.news-list {
+    padding: 24px;
+}
+
+.no-news {
+    color: #8f98a0;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.news-item {
+    background: rgba(102, 192, 244, 0.05);
+    border-left: 3px solid #66c0f4;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+.news-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.news-item h3 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin: 0;
+    flex: 1;
+}
+
+.news-date {
+    color: #8f98a0;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.news-content {
+    color: #b8b6b4;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+.read-more {
+    color: #66c0f4;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    color: #5ab0e0;
+    transform: translateX(4px);
+}
+
+button {
+    background: #66c0f4;
+    color: #1b2838;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #5ab0e0;
+    transform: translateY(-2px);
+}

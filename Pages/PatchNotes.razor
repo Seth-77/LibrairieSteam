@@ -1,0 +1,116 @@
+@page "/patchnotes"
+@inject SteamAuthService SteamAuth
+@inject SteamApiService SteamApi
+@inject FavoritesService Favorites
+@inject NavigationManager Navigation
+
+<div class="patchnotes-container">
+    <h1>📝 Patch Notes de vos jeux favoris</h1>
+    
+    @if (isLoading)
+    {
+        <p>Chargement des patch notes...</p>
+    }
+    else if (favoriteGamesWithNews.Count == 0)
+    {
+        <div class="empty-state">
+            <p>Aucun jeu favori.</p>
+            <p>Marquez des jeux en favoris dans votre bibliothèque !</p>
+            <button @onclick="GoToLibrary">Aller à la bibliothèque</button>
+        </div>
+    }
+    else
+    {
+        <p>@favoriteGamesWithNews.Count jeu(x) favori(s)</p>
+        
+        @foreach (var gameNews in favoriteGamesWithNews)
+        {
+            <div class="game-section">
+                <div class="game-header">
+                    <img src="@gameNews.Game.HeaderImageUrl" alt="@gameNews.Game.Name" class="game-banner" />
+                    <div class="game-info-overlay">
+                        <h2>⭐ @gameNews.Game.Name</h2>
+                        <p>@gameNews.News.Count mise(s) à jour ce mois-ci</p>
+                    </div>
+                </div>
+                
+                <div class="news-list">
+                    @if (gameNews.News.Count == 0)
+                    {
+                        <p class="no-news">Aucune mise à jour récente</p>
+                    }
+                    else
+                    {
+                        @foreach (var newsItem in gameNews.News.Take(5))
+                        {
+                            <div class="news-item">
+                                <div class="news-header">
+                                    <h3>@newsItem.Title</h3>
+                                    <span class="news-date">@newsItem.DateFormatted</span>
+                                </div>
+                                <p class="news-content">@newsItem.ContentPreview</p>
+                                <a href="@newsItem.Url" target="_blank" class="read-more">
+                                    Lire plus sur Steam →
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private string? steamId;
+    private List<GameWithNews> favoriteGamesWithNews = new();
+    private bool isLoading = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        steamId = await SteamAuth.GetCurrentSteamId();
+        
+        if (string.IsNullOrEmpty(steamId))
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+        
+        await LoadPatchNotes();
+    }
+    
+    private async Task LoadPatchNotes()
+    {
+        isLoading = true;
+        
+        var allGames = await SteamApi.GetOwnedGamesAsync(steamId!);
+        var favoriteIds = await Favorites.GetFavoritesAsync(steamId!);
+        
+        var favoriteGames = allGames.Where(g => favoriteIds.Contains(g.AppId)).ToList();
+        
+        favoriteGamesWithNews = new List<GameWithNews>();
+        
+        foreach (var game in favoriteGames)
+        {
+            var news = await SteamApi.GetGameNewsAsync(game.AppId);
+            favoriteGamesWithNews.Add(new GameWithNews
+            {
+                Game = game,
+                News = news
+            });
+        }
+        
+        isLoading = false;
+    }
+    
+    private void GoToLibrary()
+    {
+        Navigation.NavigateTo("/library");
+    }
+    
+    private class GameWithNews
+    {
+        public SteamGame Game { get; set; } = new();
+        public List<GameNewsItem> News { get; set; } = new();
+    }
+}
