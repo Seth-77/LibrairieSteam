@@ -10,7 +10,7 @@ namespace LibrairieSteam.Services
         private const string SteamApiKey = "EF7E74B79126AF6FB3DF286E9949E91C";
         
         private const string SteamApiBaseUrl = "https://api.steampowered.com";
-        private const string CorsProxy = "https://api.allorigins.win/raw?url=";
+        private const string CorsProxy = "https://corsproxy.io/?";
         
         public SteamApiService(HttpClient httpClient)
         {

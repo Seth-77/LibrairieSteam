@@ -1,0 +1,67 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
+    padding: 20px;
+}
+
+.login-card {
+    background: rgba(27, 40, 56, 0.95);
+    border: 2px solid #66c0f4;
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.steam-logo {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.login-card h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.login-card p {
+    color: #b8b6b4;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.steam-login-btn {
+    background: #66c0f4;
+    color: #1b2838;
+    border: none;
+    padding: 18px 40px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 320px;
+}
+
+.steam-login-btn:hover {
+    background: #5ab0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 192, 244, 0.4);
+}
+
+.steam-login-btn:active {
+    transform: translateY(0);
+}
+
+.info-text {
+    font-size: 0.9rem;
+    color: #8f98a0;
+    margin-top: 24px;
+}
