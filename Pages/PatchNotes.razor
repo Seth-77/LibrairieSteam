@@ -5,59 +5,69 @@
 @inject NavigationManager Navigation
 
 <div class="patchnotes-container">
-    <h1>📝 Patch Notes de vos jeux favoris</h1>
+    <div class="patchnotes-header">
+        <a href="/library" class="back-button">
+            ← Retour
+        </a>
+        <div class="header-content">
+            <h1>📝 Patch Notes de vos jeux favoris</h1>
+            <p class="subtitle">Restez informé des dernières mises à jour</p>
+        </div>
+    </div>
     
     @if (isLoading)
     {
-        <p>Chargement des patch notes...</p>
+        <div class="loading-state">
+            <p>Chargement des patch notes...</p>
+        </div>
     }
     else if (favoriteGamesWithNews.Count == 0)
     {
         <div class="empty-state">
             <p>Aucun jeu favori.</p>
             <p>Marquez des jeux en favoris dans votre bibliothèque !</p>
-            <button @onclick="GoToLibrary">Aller à la bibliothèque</button>
+            <a href="/library" class="btn-library">Aller à la bibliothèque</a>
         </div>
     }
     else
     {
-        <p>@favoriteGamesWithNews.Count jeu(x) favori(s)</p>
-        
-        @foreach (var gameNews in favoriteGamesWithNews)
-        {
-            <div class="game-section">
-                <div class="game-header">
-                    <img src="@gameNews.Game.HeaderImageUrl" alt="@gameNews.Game.Name" class="game-banner" />
-                    <div class="game-info-overlay">
-                        <h2>⭐ @gameNews.Game.Name</h2>
-                        <p>@gameNews.News.Count mise(s) à jour ce mois-ci</p>
+        <div class="games-news-container">
+            @foreach (var gameNews in favoriteGamesWithNews)
+            {
+                <div class="game-section">
+                    <div class="game-banner-header">
+                        <img src="@gameNews.Game.HeaderImageUrl" alt="@gameNews.Game.Name" class="game-banner" />
+                        <div class="game-overlay">
+                            <h2>@gameNews.Game.Name</h2>
+                            <p>@gameNews.News.Count mise(s) à jour ce mois-ci</p>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="news-list">
-                    @if (gameNews.News.Count == 0)
-                    {
-                        <p class="no-news">Aucune mise à jour récente</p>
-                    }
-                    else
-                    {
-                        @foreach (var newsItem in gameNews.News.Take(5))
+                    
+                    <div class="news-container">
+                        @if (gameNews.News.Count == 0)
                         {
-                            <div class="news-item">
-                                <div class="news-header">
-                                    <h3>@newsItem.Title</h3>
+                            <p class="no-news">Aucune mise à jour récente</p>
+                        }
+                        else
+                        {
+                            @foreach (var newsItem in gameNews.News.Take(5))
+                            {
+                                <div class="news-item">
+                                    <div class="news-main">
+                                        <h3 class="news-title">@newsItem.Title</h3>
+                                        <p class="news-preview">@newsItem.ContentPreview</p>
+                                        <a href="@newsItem.Url" target="_blank" class="read-more">
+                                            Lire plus →
+                                        </a>
+                                    </div>
                                     <span class="news-date">@newsItem.DateFormatted</span>
                                 </div>
-                                <p class="news-content">@newsItem.ContentPreview</p>
-                                <a href="@newsItem.Url" target="_blank" class="read-more">
-                                    Lire plus sur Steam →
-                                </a>
-                            </div>
+                            }
                         }
-                    }
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
 </div>
 
@@ -101,11 +111,6 @@
         }
         
         isLoading = false;
-    }
-    
-    private void GoToLibrary()
-    {
-        Navigation.NavigateTo("/library");
     }
     
     private class GameWithNews

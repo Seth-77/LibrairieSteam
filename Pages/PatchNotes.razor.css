@@ -2,48 +2,67 @@
     padding: 40px 20px;
     background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
     min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.patchnotes-container h1 {
+/* Header */
+.patchnotes-header {
+    margin-bottom: 40px;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #66c0f4;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border: 1px solid #66c0f4;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(102, 192, 244, 0.1);
+}
+
+.header-content {
+    text-align: center;
+}
+
+.header-content h1 {
     color: #ffffff;
     font-size: 2.5rem;
-    margin-bottom: 20px;
+    margin: 0 0 12px 0;
     font-weight: 700;
 }
 
-.patchnotes-container > p {
-    color: #b8b6b4;
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    background: rgba(27, 40, 56, 0.9);
-    border: 1px solid rgba(102, 192, 244, 0.3);
-    border-radius: 12px;
-    max-width: 500px;
-    margin: 40px auto;
-}
-
-.empty-state p {
+.subtitle {
     color: #b8b6b4;
     font-size: 1.1rem;
-    margin: 12px 0;
+    margin: 0;
 }
 
+/* Container des jeux */
+.games-news-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Section par jeu */
 .game-section {
-    margin-bottom: 40px;
-    background: rgba(27, 40, 56, 0.9);
-    border: 1px solid rgba(102, 192, 244, 0.3);
+    background: rgba(27, 40, 56, 0.6);
     border-radius: 12px;
     overflow: hidden;
 }
 
-.game-header {
+.game-banner-header {
     position: relative;
-    height: 200px;
+    height: 250px;
     overflow: hidden;
 }
 
@@ -53,99 +72,160 @@
     object-fit: cover;
 }
 
-.game-info-overlay {
+.game-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-    padding: 40px 24px 20px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+    padding: 60px 32px 24px;
 }
 
-.game-info-overlay h2 {
+.game-overlay h2 {
     color: #ffffff;
-    font-size: 1.8rem;
+    font-size: 2rem;
     margin: 0 0 8px 0;
+    font-weight: 700;
 }
 
-.game-info-overlay p {
+.game-overlay p {
     color: #66c0f4;
     font-size: 1rem;
     margin: 0;
 }
 
-.news-list {
-    padding: 24px;
+/* Container des news */
+.news-container {
+    padding: 24px 32px;
 }
 
 .no-news {
     color: #8f98a0;
     font-style: italic;
     text-align: center;
-    padding: 20px;
+    padding: 40px;
 }
 
+/* Item de news */
 .news-item {
-    background: rgba(102, 192, 244, 0.05);
-    border-left: 3px solid #66c0f4;
-    padding: 20px;
-    margin-bottom: 16px;
-    border-radius: 4px;
-}
-
-.news-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 12px;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(102, 192, 244, 0.1);
 }
 
-.news-item h3 {
-    color: #ffffff;
-    font-size: 1.2rem;
-    margin: 0;
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-main {
     flex: 1;
 }
 
-.news-date {
-    color: #8f98a0;
-    font-size: 0.9rem;
-    white-space: nowrap;
+.news-title {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
 }
 
-.news-content {
+.news-preview {
     color: #b8b6b4;
+    font-size: 0.95rem;
     line-height: 1.6;
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
+}
+
+.news-date {
+    color: #66c0f4;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    padding-top: 4px;
 }
 
 .read-more {
     color: #66c0f4;
     text-decoration: none;
+    font-size: 0.95rem;
     font-weight: 600;
-    display: inline-block;
     transition: all 0.3s ease;
 }
 
 .read-more:hover {
     color: #5ab0e0;
-    transform: translateX(4px);
 }
 
-button {
+/* États */
+.loading-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #b8b6b4;
+    font-size: 1.2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: rgba(27, 40, 56, 0.6);
+    border-radius: 12px;
+    max-width: 600px;
+    margin: 40px auto;
+}
+
+.empty-state p {
+    color: #b8b6b4;
+    font-size: 1.1rem;
+    margin: 12px 0;
+}
+
+.btn-library {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 14px 32px;
     background: #66c0f4;
     color: #1b2838;
-    border: none;
-    padding: 14px 32px;
+    text-decoration: none;
     border-radius: 8px;
-    font-size: 1.1rem;
     font-weight: 600;
-    cursor: pointer;
     transition: all 0.3s ease;
 }
 
-button:hover {
+.btn-library:hover {
     background: #5ab0e0;
     transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .patchnotes-container {
+        padding: 20px 16px;
+    }
+    
+    .header-content h1 {
+        font-size: 2rem;
+    }
+    
+    .game-overlay {
+        padding: 40px 20px 20px;
+    }
+    
+    .game-overlay h2 {
+        font-size: 1.5rem;
+    }
+    
+    .news-container {
+        padding: 20px;
+    }
+    
+    .news-item {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .news-date {
+        align-self: flex-start;
+    }
 }
