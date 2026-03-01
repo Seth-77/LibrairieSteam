@@ -38,12 +38,13 @@ namespace LibrairieSteam.Services
             foreach (var game in gamesElement.EnumerateArray())
             {
                 games.Add(new SteamGame
-                {
-                    AppId = game.GetProperty("appid").GetInt32(),
-                    Name = game.GetProperty("name").GetString() ?? "Unknown",
-                    PlaytimeForever = game.GetProperty("playtime_forever").GetInt32(),
-                    HeaderImageUrl = $"https://cdn.cloudflare.steamstatic.com/steam/apps/{game.GetProperty("appid").GetInt32()}/header.jpg"
-                });
+                    {
+                        AppId = game.GetProperty("appid").GetInt32(),
+                        Name = game.GetProperty("name").GetString() ?? "Unknown",
+                        PlaytimeForever = game.GetProperty("playtime_forever").GetInt32(),
+                        Playtime2Weeks = game.TryGetProperty("playtime_2weeks", out var p2w) ? p2w.GetInt32() : 0,
+                        HeaderImageUrl = $"https://cdn.cloudflare.steamstatic.com/steam/apps/{game.GetProperty("appid").GetInt32()}/header.jpg"
+                    });
             }
             
             return games.OrderByDescending(g => g.PlaytimeForever).ToList();
@@ -89,6 +90,31 @@ namespace LibrairieSteam.Services
             
             return newsList;
         }
+        public async Task<SteamUserInfo?> GetPlayerSummaryAsync(string steamId)
+        {
+            var steamUrl = $"{SteamApiBaseUrl}/ISteamUser/GetPlayerSummaries/v0002/" +
+                          $"?key={SteamApiKey}&steamids={steamId}";
+            
+            var url = $"{CorsProxy}{Uri.EscapeDataString(steamUrl)}";
+            
+            var response = await _httpClient.GetAsync(url);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(jsonResponse);
+            
+            var player = jsonDoc.RootElement
+                .GetProperty("response")
+                .GetProperty("players")
+                .EnumerateArray()
+                .FirstOrDefault();
+            
+            return new SteamUserInfo
+            {
+                SteamId = steamId,
+                PersonaName = player.GetProperty("personaname").GetString() ?? "",
+                AvatarUrl = player.GetProperty("avatarfull").GetString() ?? ""
+            };
+        }
+    
     }
     
     public class GameNewsItem
@@ -99,5 +125,12 @@ namespace LibrairieSteam.Services
         public string Url { get; set; } = string.Empty;
         
         public string DateFormatted => Date.ToString("dd MMMM yyyy");
+    }
+
+    public class SteamUserInfo
+    {
+        public string SteamId { get; set; } = string.Empty;
+        public string PersonaName { get; set; } = string.Empty;
+        public string AvatarUrl { get; set; } = string.Empty;
     }
 }

@@ -22,5 +22,22 @@ namespace LibrairieSteam.Models
                     return $"{minutes}min";
             }
         }
+
+        public string Playtime2WeeksFormatted
+        {
+            get
+            {
+                if (Playtime2Weeks == 0)
+                    return "";
+                
+                var hours = Playtime2Weeks / 60;
+                var minutes = Playtime2Weeks % 60;
+                
+                if (hours > 0)
+                    return $"{hours}h {minutes}min récemment";
+                else
+                    return $"{minutes}min récemment";
+            }
+        }
     }
 }

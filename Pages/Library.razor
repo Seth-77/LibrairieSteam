@@ -5,42 +5,115 @@
 @inject NavigationManager Navigation
 
 <div class="library-container">
-    <h1>Ma Bibliothèque Steam</h1>
+    <div class="library-header">
+        <div class="user-profile">
+            @if (userInfo != null && !string.IsNullOrEmpty(userInfo.AvatarUrl))
+            {
+                <img src="@userInfo.AvatarUrl" alt="Avatar" class="user-avatar" />
+            }
+            <div class="user-details">
+                <h1>@(userInfo != null ? $"Bibliothèque de {userInfo.PersonaName}" : "Ma Bibliothèque Steam")</h1>
+                <p class="game-count">@games.Count jeu(x) au total</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/patchnotes" class="action-btn">
+                📝 Patch Notes
+            </a>
+            <button class="logout-btn" @onclick="Logout">Déconnexion</button>
+        </div>
+    </div>
     
     @if (isLoading)
     {
-        <p>Chargement de vos jeux...</p>
+        <div class="loading-state">
+            <p>Chargement de votre bibliothèque...</p>
+        </div>
     }
     else
     {
-        <p>@games.Count jeu(x) chargé(s)</p>
+        <div class="controls-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" 
+                       placeholder="Rechercher un jeu..." 
+                       @bind="searchQuery" 
+                       @bind:event="oninput"
+                       class="search-input" />
+            </div>
+            
+            <button class="filter-btn @(showOnlyFavorites ? "active" : "")" 
+                    @onclick="ToggleFavoritesFilter">
+                ⭐ @(showOnlyFavorites ? "Tous les jeux" : "Favoris uniquement")
+            </button>
+        </div>
         
         <div class="games-grid">
-            @foreach (var game in games)
+            @foreach (var game in FilteredGames)
             {
                 <div class="game-card">
-                    <img src="@game.HeaderImageUrl" alt="@game.Name" />
-                    
-                    <div class="game-info">
-                        <h3>@game.Name</h3>
-                        <p>⏱️ @game.PlaytimeFormatted</p>
-                        
-                        <button class="favorite-btn" @onclick="() => ToggleFavorite(game)">
+                    <div class="game-image-container">
+                        <img src="@game.HeaderImageUrl" alt="@game.Name" class="game-image" />
+                        <button class="favorite-btn @(game.IsFavorite ? "favorited" : "")" 
+                                @onclick="() => ToggleFavorite(game)">
                             @(game.IsFavorite ? "⭐" : "☆")
                         </button>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">@game.Name</h3>
+                        <div class="game-stats">
+                            <p class="playtime-total">⏱️ @game.PlaytimeFormatted</p>
+                            @if (game.Playtime2Weeks > 0)
+                            {
+                                <p class="playtime-recent">⚡ @game.Playtime2WeeksFormatted</p>
+                            }
+                        </div>
                     </div>
                 </div>
             }
         </div>
         
-        <button @onclick="Logout">Déconnexion</button>
+        @if (FilteredGames.Count() == 0)
+        {
+            <div class="empty-state">
+                <p>Aucun jeu trouvé.</p>
+                @if (showOnlyFavorites)
+                {
+                    <p>Vous n'avez pas encore de favoris !</p>
+                }
+            </div>
+        }
     }
 </div>
 
 @code {
     private string? steamId;
+    private SteamUserInfo? userInfo;
     private List<SteamGame> games = new();
     private bool isLoading = true;
+    private string searchQuery = string.Empty;
+    private bool showOnlyFavorites = false;
+    
+    private IEnumerable<SteamGame> FilteredGames
+    {
+        get
+        {
+            var filtered = games.AsEnumerable();
+            
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                filtered = filtered.Where(g => 
+                    g.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+            }
+            
+            if (showOnlyFavorites)
+            {
+                filtered = filtered.Where(g => g.IsFavorite);
+            }
+            
+            return filtered;
+        }
+    }
     
     protected override async Task OnInitializedAsync()
     {
@@ -52,6 +125,7 @@
             return;
         }
         
+        userInfo = await SteamApi.GetPlayerSummaryAsync(steamId);
         games = await SteamApi.GetOwnedGamesAsync(steamId);
         
         var favoriteIds = await Favorites.GetFavoritesAsync(steamId);
@@ -68,6 +142,11 @@
     {
         await Favorites.ToggleFavoriteAsync(steamId!, game.AppId);
         game.IsFavorite = !game.IsFavorite;
+    }
+    
+    private void ToggleFavoritesFilter()
+    {
+        showOnlyFavorites = !showOnlyFavorites;
     }
     
     private async Task Logout()
