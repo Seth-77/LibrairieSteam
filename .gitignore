@@ -1,3 +1,5 @@
 /bin
 /obj
 wwwroot/appsettings.json
+/LibrairieSteam.Tests/obj
+/LibrairieSteam.Tests/bin
