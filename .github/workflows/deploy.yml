@@ -1,0 +1,32 @@
+name: Deploy Blazor WASM
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Injecte la clé API depuis les secrets GitHub
+      - name: Inject API Key
+        run: |
+          echo '{ "SteamApiKey": "${{ secrets.STEAM_API_KEY }}" }' > wwwroot/appsettings.json
+        working-directory: LibrairieSteam
+
+      - name: Build
+        run: dotnet publish LibrairieSteam.csproj -c Release -o output
+        working-directory: LibrairieSteam
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./LibrairieSteam/output/wwwroot

@@ -7,20 +7,21 @@ namespace LibrairieSteam.Services
     {
         private readonly HttpClient _httpClient;
         
-        private const string SteamApiKey = "EF7E74B79126AF6FB3DF286E9949E91C";
+        private readonly string _steamApiKey;
         
         private const string SteamApiBaseUrl = "https://api.steampowered.com";
         private const string CorsProxy = "https://corsproxy.io/?";
         
-        public SteamApiService(HttpClient httpClient)
+        public SteamApiService(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
+            _steamApiKey = config["SteamApiKey"] ?? "";
         }
         
         public async Task<List<SteamGame>> GetOwnedGamesAsync(string steamId)
         {
             var steamUrl = $"{SteamApiBaseUrl}/IPlayerService/GetOwnedGames/v0001/" +
-                          $"?key={SteamApiKey}&steamid={steamId}" +
+                          $"?key={_steamApiKey}&steamid={steamId}" +
                           $"&include_appinfo=true&include_played_free_games=true";
             
             var url = $"{CorsProxy}{Uri.EscapeDataString(steamUrl)}";
@@ -93,7 +94,7 @@ namespace LibrairieSteam.Services
         public async Task<SteamUserInfo?> GetPlayerSummaryAsync(string steamId)
         {
             var steamUrl = $"{SteamApiBaseUrl}/ISteamUser/GetPlayerSummaries/v0002/" +
-                          $"?key={SteamApiKey}&steamids={steamId}";
+                          $"?key={_steamApiKey}&steamids={steamId}";
             
             var url = $"{CorsProxy}{Uri.EscapeDataString(steamUrl)}";
             
