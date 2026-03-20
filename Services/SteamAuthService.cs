@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace LibrairieSteam.Services
 {
+    // Service d'authentification via Steam OpenID 2.0
+    // Gère le flux de connexion, la session utilisateur (localStorage) et la déconnexion
     public class SteamAuthService
     {
         private readonly IJSRuntime _jsRuntime;
@@ -19,6 +21,7 @@ namespace LibrairieSteam.Services
             _navigationManager = navigationManager;
         }
         
+        // Construit l'URL de redirection vers Steam avec les paramètres OpenID requis
         public string GetSteamLoginUrl()
         {
             var returnUrl = GetReturnUrl();
@@ -40,18 +43,22 @@ namespace LibrairieSteam.Services
             return $"{SteamOpenIdUrl}?{queryString}";
         }
         
+        // URL de retour après authentification (page d'accueil de l'app)
         private string GetReturnUrl()
         {
             var baseUri = _navigationManager.BaseUri.TrimEnd('/');
             return $"{baseUri}/";
         }
         
+        // Realm OpenID = scheme + authority de l'app
         private string GetRealm()
         {
             var uri = new Uri(_navigationManager.BaseUri);
             return $"{uri.Scheme}://{uri.Authority}";
         }
         
+        // Extrait le SteamID depuis l'URL de retour OpenID (paramètre openid.claimed_id)
+        // Retourne null si la validation échoue
         public Task<string?> ValidateSteamLogin(string currentUrl)
         {
             try
@@ -65,6 +72,7 @@ namespace LibrairieSteam.Services
                     throw new Exception("Claimed ID manquant");
                 }
                 
+                // Le SteamID 64 bits se trouve à la fin de l'URL claimed_id
                 var steamIdMatch = Regex.Match(claimedId, 
                     @"https://steamcommunity.com/openid/id/(\d+)");
                 
@@ -86,6 +94,7 @@ namespace LibrairieSteam.Services
             }
         }
         
+        // Sauvegarde le SteamID et l'horodatage de connexion dans le localStorage
         public async Task SaveUserSession(string steamId)
         {
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "steamId", steamId);
@@ -95,6 +104,7 @@ namespace LibrairieSteam.Services
             Console.WriteLine($"💾 Session sauvegardée pour {steamId}");
         }
         
+        // Récupère le SteamID de la session active, ou null si non connecté
         public async Task<string?> GetCurrentSteamId()
         {
             try
@@ -107,6 +117,7 @@ namespace LibrairieSteam.Services
             }
         }
         
+        // Supprime la session du localStorage et redirige vers la page d'accueil
         public async Task Logout()
         {
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "steamId");
@@ -117,6 +128,7 @@ namespace LibrairieSteam.Services
             Console.WriteLine("👋 Déconnexion réussie");
         }
         
+        // Vérifie si un utilisateur est connecté (session active dans le localStorage)
         public async Task<bool> IsLoggedIn()
         {
             var steamId = await GetCurrentSteamId();

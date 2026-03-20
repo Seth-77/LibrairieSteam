@@ -2,6 +2,8 @@
 @inject SteamAuthService SteamAuth
 @inject NavigationManager Navigation
 
+@* Page d'accueil / login — redirige vers /library si déjà connecté *@
+
 <div class="login-container">
     <div class="login-card">
         <div class="steam-logo">
@@ -22,10 +24,12 @@
 </div>
 
 @code {
+    // Au chargement : traite le retour OpenID de Steam ou redirige si déjà connecté
     protected override async Task OnInitializedAsync()
     {
         var currentUrl = Navigation.Uri;
         
+        // Si l'URL contient la réponse OpenID, on valide l'authentification
         if (currentUrl.Contains("openid.mode=id_res"))
         {
             Console.WriteLine("🔄 Retour de Steam détecté");
@@ -44,6 +48,7 @@
         }
         else
         {
+            // Pas de retour OpenID : si déjà connecté, redirige vers la bibliothèque
             var isLoggedIn = await SteamAuth.IsLoggedIn();
             if (isLoggedIn)
             {
@@ -52,6 +57,7 @@
         }
     }
     
+    // Redirige l'utilisateur vers la page de login Steam (OpenID)
     private void LoginWithSteam()
     {
         var steamLoginUrl = SteamAuth.GetSteamLoginUrl();

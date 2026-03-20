@@ -4,6 +4,8 @@
 @inject FavoritesService Favorites
 @inject NavigationManager Navigation
 
+@* Page patch notes — affiche les actualités récentes des jeux marqués en favoris *@
+
 <div class="patchnotes-container">
     <div class="patchnotes-header">
         <a href="/library" class="back-button">
@@ -50,6 +52,7 @@
                         }
                         else
                         {
+                            @* Limite l'affichage à 5 news par jeu *@
                             @foreach (var newsItem in gameNews.News.Take(5))
                             {
                                 <div class="news-item">
@@ -76,6 +79,7 @@
     private List<GameWithNews> favoriteGamesWithNews = new();
     private bool isLoading = true;
     
+    // Redirige vers / si non connecté, sinon charge les patch notes
     protected override async Task OnInitializedAsync()
     {
         steamId = await SteamAuth.GetCurrentSteamId();
@@ -89,6 +93,7 @@
         await LoadPatchNotes();
     }
     
+    // Récupère les jeux favoris puis charge les news de chaque jeu séquentiellement
     private async Task LoadPatchNotes()
     {
         isLoading = true;
@@ -96,6 +101,7 @@
         var allGames = await SteamApi.GetOwnedGamesAsync(steamId!);
         var favoriteIds = await Favorites.GetFavoritesAsync(steamId!);
         
+        // Ne garde que les jeux marqués en favoris
         var favoriteGames = allGames.Where(g => favoriteIds.Contains(g.AppId)).ToList();
         
         favoriteGamesWithNews = new List<GameWithNews>();
@@ -113,6 +119,7 @@
         isLoading = false;
     }
     
+    // Associe un jeu à sa liste de news pour l'affichage
     private class GameWithNews
     {
         public SteamGame Game { get; set; } = new();

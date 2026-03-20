@@ -4,6 +4,8 @@
 @inject FavoritesService Favorites
 @inject NavigationManager Navigation
 
+@* Page bibliothèque — affiche tous les jeux de l'utilisateur avec recherche et filtrage par favoris *@
+
 <div class="library-container">
     <div class="library-header">
         <div class="user-profile">
@@ -35,6 +37,7 @@
         <div class="controls-bar">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
+                @* Recherche en temps réel grâce à oninput *@
                 <input type="text" 
                        placeholder="Rechercher un jeu..." 
                        @bind="searchQuery" 
@@ -94,6 +97,7 @@
     private string searchQuery = string.Empty;
     private bool showOnlyFavorites = false;
     
+    // Filtre les jeux par nom (recherche) et par statut favori
     private IEnumerable<SteamGame> FilteredGames
     {
         get
@@ -115,6 +119,7 @@
         }
     }
     
+    // Charge le profil, les jeux et les favoris — redirige vers / si non connecté
     protected override async Task OnInitializedAsync()
     {
         steamId = await SteamAuth.GetCurrentSteamId();
@@ -128,6 +133,7 @@
         userInfo = await SteamApi.GetPlayerSummaryAsync(steamId);
         games = await SteamApi.GetOwnedGamesAsync(steamId);
         
+        // Marque les jeux qui sont dans la liste des favoris
         var favoriteIds = await Favorites.GetFavoritesAsync(steamId);
         
         foreach (var game in games)
@@ -138,12 +144,14 @@
         isLoading = false;
     }
     
+    // Ajoute ou retire un jeu des favoris
     private async Task ToggleFavorite(SteamGame game)
     {
         await Favorites.ToggleFavoriteAsync(steamId!, game.AppId);
         game.IsFavorite = !game.IsFavorite;
     }
     
+    // Bascule entre l'affichage de tous les jeux et les favoris uniquement
     private void ToggleFavoritesFilter()
     {
         showOnlyFavorites = !showOnlyFavorites;
